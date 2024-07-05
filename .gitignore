@@ -1,5 +1,7 @@
-Datalake/
-Datawarehouse/
+Datalake/*
+Datawarehouse/*
+
+cumsub.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
