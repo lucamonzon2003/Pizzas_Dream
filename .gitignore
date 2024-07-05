@@ -1,5 +1,7 @@
 Datalake/*
 Datawarehouse/*
+Model_output/*
+Images_output/*
 
 cumsub.ipynb
 
