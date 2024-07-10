@@ -1,5 +1,9 @@
-Datalake/
-Datawarehouse/
+Datalake/*
+Datawarehouse/*
+Model_output/*
+Images_output/*
+
+cumsub.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
