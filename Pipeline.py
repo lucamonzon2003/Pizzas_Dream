@@ -8,31 +8,33 @@ from statsmodels.tsa.statespace.sarimax import SARIMAX
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import TimeSeriesSplit
 
-
 # Suprimir advertencias específicas
 warnings.filterwarnings("ignore", category=UserWarning, module="statsmodels")
 
+# Función para cargar datos desde un archivo CSV
 def load_data(file_path):
     try:
-        df = pd.read_csv(file_path)
-        df['date'] = pd.to_datetime(df['date'])
-        df = df.set_index('date')
-        df.index.freq = 'MS'
-        return df['value']
+        df = pd.read_csv(file_path)  # Leer archivo CSV
+        df['date'] = pd.to_datetime(df['date'])  # Convertir columna de fechas
+        df = df.set_index('date')  # Establecer columna de fechas como índice
+        df.index.freq = 'MS'  # Configurar frecuencia del índice
+        return df['value']  # Devolver la serie temporal
     except Exception as e:
         print(f"Error loading data: {e}")
         return None
 
+# Función para construir y entrenar el modelo SARIMA
 def build_model(y):
     try:
-        tscv = TimeSeriesSplit(n_splits=7)
+        tscv = TimeSeriesSplit(n_splits=7)  # Dividir la serie temporal en 7 partes
         mse_scores = []
 
+        # Entrenar y validar el modelo con validación cruzada
         for train_index, test_index in tscv.split(y):
             train, test = y.iloc[train_index], y.iloc[test_index]
 
+            # Configuración del modelo SARIMA
             p, d, q, P, D, Q, s = (0, 1, 1, 0, 0, 1, 3)
-            
             model = SARIMAX(train, order=(p, d, q), seasonal_order=(P, D, Q, s))
             model_fit = model.fit(disp=False)
 
@@ -43,13 +45,14 @@ def build_model(y):
             mse = mean_squared_error(test, predictions)
             mse_scores.append(mse)
 
+        # Entrenar el modelo final con todos los datos
         model = SARIMAX(y, order=(p, d, q), seasonal_order=(P, D, Q, s))
         model_fit = model.fit(disp=False)
 
-        average_mse = np.mean(mse_scores)
+        average_mse = np.mean(mse_scores)  # MSE promedio de la validación cruzada
         print(f'MSE promedio: {average_mse}')
 
-        mse = mse_scores[-1]
+        mse = mse_scores[-1]  # MSE de la última iteración de validación
         print(f'MSE: {mse}')
 
         return model_fit, average_mse, mse
@@ -57,34 +60,38 @@ def build_model(y):
         print(f"Error building model: {e}")
         return None
 
+# Función para guardar el modelo entrenado
 def save_model(model, model_id):
     try:
-        model_hash = generate_number_from_word(model_id)
-        filename = f"Model_output/Model_{model_hash}.pkl"
-        joblib.dump(model, filename)
+        model_hash = generate_number_from_word(model_id)  # Generar un hash a partir del ID del modelo
+        filename = f"Model_output/Model_{model_hash}.pkl"  # Nombre del archivo para guardar el modelo
+        joblib.dump(model, filename)  # Guardar el modelo con joblib
         return model_hash
     except Exception as e:
         print(f"Error saving model: {e}")
         return None
 
+# Función para cargar un modelo guardado
 def load_model(short_timestamp):
     try:
-        filename = f"Model_output/Model_{short_timestamp}.pkl"
-        return joblib.load(filename)
+        filename = f"Model_output/Model_{short_timestamp}.pkl"  # Nombre del archivo del modelo guardado
+        return joblib.load(filename)  # Cargar el modelo con joblib
     except Exception as e:
         print(f"Error loading model: {e}")
         return None
 
+# Función para hacer predicciones con el modelo cargado
 def make_predictions(model, steps):
     try:
-        predictions = model.get_forecast(steps=steps)
-        pred_values = predictions.predicted_mean
-        confidence_intervals = predictions.conf_int()
+        predictions = model.get_forecast(steps=steps)  # Hacer predicciones
+        pred_values = predictions.predicted_mean  # Valores predichos
+        confidence_intervals = predictions.conf_int()  # Intervalos de confianza
         return pred_values, confidence_intervals
     except Exception as e:
         print(f"Error making predictions: {e}")
         return None, None
     
+# Función para visualizar las predicciones y los datos históricos
 def visualize_predictions(historical_data, pred_values, confidence_intervals, model_id):
     try:
         # Concatenar los datos históricos con las predicciones para visualización
@@ -107,11 +114,12 @@ def visualize_predictions(historical_data, pred_values, confidence_intervals, mo
         plt.tight_layout()
 
         filepath = f'Images_output/pred_{model_id}.png'
-        plt.savefig(filepath)  # Guarda el gráfico como imagen PNG
+        plt.savefig(filepath)  # Guardar el gráfico como imagen PNG
         return filepath
     except Exception as e:
         print(f"Error making predictions: {e}")
 
+# Función para generar un número hash a partir de una palabra
 def generate_number_from_word(word):
     # Crear un objeto hash SHA-256
     hash_object = hashlib.sha256(word.encode())
@@ -127,6 +135,7 @@ def generate_number_from_word(word):
     
     return num_10_digits
 
+# Código principal para la ejecución directa del script
 if __name__ == '__main__':
     data_file_path = r'Datawarehouse\pizzas_normales_sd.csv'
     future_steps = 3
