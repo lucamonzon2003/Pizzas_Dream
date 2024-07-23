@@ -27,7 +27,7 @@ Esta aplicación está diseñada para ayudar a predecir las unidades vendidas de
 
 1. Clona este repositorio:
     ```bash
-    git clone https://github.com/tu_usuario/tu_proyecto.git
+    git clone https://github.com/lucamonzon2003/Pizzas_Dream.git
     ```
 2. Navega al directorio del proyecto:
     ```bash
@@ -45,6 +45,10 @@ Esta aplicación está diseñada para ayudar a predecir las unidades vendidas de
     streamlit run app.py
     ```
 2. Carga tus datos históricos en formato CSV y sigue las instrucciones en la interfaz.
+
+### Diagrama de secuencía
+
+<img src="Images/Diagrama de secuencia.jpeg" alt="Diagrama de secuencía" width="600"/>
 
 ### Ejemplo de Uso
 
@@ -80,6 +84,6 @@ Distribuido bajo la licencia MIT. Ver `LICENSE` para más información.
 
 ## Contacto
 
-Luca Hector Monzon - [tu_email@example.com](mailto:tu_email@example.com)
+Luca Hector Monzon - [lucamonzon2003@gmail.com](mailto:lucamonzon2003@gmail.com)
 
-Enlace al Proyecto: https://github.com/tu_usuario/tu_proyecto
+Enlace al Proyecto: https://github.com/lucamonzon2003/Pizzas_Dream
